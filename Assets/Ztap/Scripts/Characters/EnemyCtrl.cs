@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using EventAggregation;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyCtrl : ZCharacterController, IPointerDownHandler
 {
+    public int Experience = 10;
     [Header("Following")]
     public bool isFollowing;
     public Transform targetToFollow;
@@ -46,7 +48,8 @@ public class EnemyCtrl : ZCharacterController, IPointerDownHandler
         base.Start();
         tag = "Enemy";
 
-        GameController.instance.currentLvlCtrl.enemies.Add(this);
+        if (GameController.instance != null)
+            GameController.instance.currentLvlCtrl.enemies.Add(this);
 
 
         if (targetToFollow == null)
@@ -89,6 +92,7 @@ public class EnemyCtrl : ZCharacterController, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         Die();
+        
     }
 
     public override void Die(DieType type = DieType.explode)
@@ -97,11 +101,16 @@ public class EnemyCtrl : ZCharacterController, IPointerDownHandler
         {
             case DieType.anim:
                 StartCoroutine(Dying());
+                ZombieKilledByPlayersCharacter killed = new ZombieKilledByPlayersCharacter { Exp = Experience };
+                EventAggregator.Publish(killed);
                 break;
             case DieType.explode:
                 StartCoroutine(Exploding());
+                ZombieKilledByPlayer killed1 = new ZombieKilledByPlayer { Exp = Experience };
+                EventAggregator.Publish(killed1);
                 break;
         }
+        
     }
 
     #region DieType coroutines

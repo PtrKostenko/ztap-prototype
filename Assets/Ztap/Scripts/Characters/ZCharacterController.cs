@@ -6,12 +6,13 @@ using UnityEngine;
 public class ZCharacterController : MonoBehaviour
 {
     [Header("Main")]
-    [SerializeField] protected float Hp = 100;
+    public float maxHp = 100;
+    public float hp = 100;
     [Header("Movement")]
-    [SerializeField] protected float speed = 1;
+    public float speed = 1;
     [Header("Combat")]
-    [SerializeField] protected float damage = 1;
-    [SerializeField] protected float radius = 1;
+    public float damage = 1;
+    public float radius = 1;
     [Header("Senses")]
     public CharsNearTrigger nearTriggerCollider;
     public List<ZCharacterController> charsNear;
@@ -62,8 +63,8 @@ public class ZCharacterController : MonoBehaviour
 
     virtual public void TakeDamage(float damage, ZCharacterController dealer = null)
     {
-        Hp -= damage;
-        if (Hp < 0)
+        hp -= damage;
+        if (hp < 0)
         {
             if (dealer == null)
             {
